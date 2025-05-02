@@ -1,0 +1,24 @@
+Algoritmul CatBoost învață din datele trecute care combinații de factori par suspicioase și apoi, pentru fiecare tranzacție nouă, calculează șansele să fie fraudă pe baza acelor factori.
+
+De ce CatBoost?
+- Este rapid și gestionează automat date categorice (precum "currency" sau "description") fără să le codifice manual.
+- Merge bine și pe date dezechilibrate (puține fraude, multe tranzacții bune).
+- Evită problemele de overfitting (învățarea excesivă) mult mai bine decât alți algoritmi boosting.
+
+Ce face algoritmul CatBoost în contextul tranzacțiilor bancare:
+- Învață tipare din trecut
+- Modelul este antrenat pe un istoric de tranzacții unde știe deja care au fost fraude și care nu.
+- El analizează caracteristicile fiecărei tranzacții (amount, balance, currency, hour, description, recentTxCount) și încearcă să găsească modele, combinații sau condiții care apar mai frecvent la tranzacțiile frauduloase.
+- Construiește decizii treptate
+- CatBoost creează o pădure de arbori de decizie ("boosting trees"), unde fiecare arbore decide pe baza unor întrebări simple:
+    Este suma mai mare de 5000?
+    S-a făcut tranzacția noaptea?
+    Moneda este EUR sau USD?
+    Descrierea conține "urgent transfer" sau "crypto"?
+- Fiecare arbore încearcă să repare greșelile făcute de arborii anteriori — de aceea se numește boosting.
+- Scor pentru fraudă
+- Pentru fiecare tranzacție nouă, modelul trece caracteristicile prin toți arborii și combină rezultatele într-un scor de probabilitate:
+- 0% → sigură
+- 100% → aproape sigură fraudă
+- Decizie finală
+- Dacă scorul e peste un anumit prag (de obicei 0.5), modelul decide că tranzacția este fraudă.
