@@ -68,14 +68,18 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-md mt-10">
-      <h2 className="text-2xl font-semibold text-blue-900 mb-4">Profilul tău</h2>
+      <h2 className="text-2xl font-semibold text-blue-900 mb-4 text-center">Profilul tău</h2>
       {user != null && <div className="space-y-3 mb-8 text-gray-900">
+        <p><span className="font-medium text-gray-700">id:</span> {user.id || 'N/A'}</p>
+        <p><span className="font-medium text-gray-700">Nume:</span> {user.ClientProfile?.lastName || 'N/A'}</p>
+        <p><span className="font-medium text-gray-700">Prenume:</span> {user.ClientProfile?.firstName || 'N/A'}</p>
+        <p><span className="font-medium text-gray-700">Adresă:</span> {user.ClientProfile?.address || 'N/A'}</p>
+        <p><span className="font-medium text-gray-700">Telefon:</span> {user.ClientProfile?.phone || 'N/A'}</p>
         <p><span className="font-medium text-gray-700">Email:</span> {user.email || 'N/A'}</p>
-        <p><span className="font-medium text-gray-700">Rol:</span> {user.role || 'client'}</p>
-        <p><span className="font-medium text-gray-700">ID Utilizator:</span> {user.id || 'N/A'}</p>
+
       </div>}
 
-      <h3 className="text-xl font-medium text-gray-800 mb-4">Date Client</h3>
+      <h3 className="text-xl font-medium text-gray-800 mb-4 text-center">Actualizare date</h3>
       {message && <p className="text-center text-sm text-blue-500 mb-4">{message}</p>}
       <form onSubmit={handleSubmit} className="space-y-4 text-gray-800">
         <div>

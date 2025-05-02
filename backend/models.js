@@ -31,36 +31,36 @@ const BankAccount = sequelize.define('BankAccount', {
 
 BankAccount.beforeCreate(async (account, options) => {
     const generateId = () => {
-      const letters = [...Array(3)].map(() => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('');
-      const numbers = [...Array(20)].map(() => Math.floor(Math.random() * 10)).join('');
-      return `RO${letters}${numbers}`;
+        const letters = [...Array(3)].map(() => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('');
+        const numbers = [...Array(20)].map(() => Math.floor(Math.random() * 10)).join('');
+        return `RO${letters}${numbers}`;
     };
-  
+
     let unique = false;
     let generatedId;
-  
+
     while (!unique) {
-      generatedId = generateId();
-      const existing = await BankAccount.findByPk(generatedId);
-      if (!existing) {
-        unique = true;
-      }
+        generatedId = generateId();
+        const existing = await BankAccount.findByPk(generatedId);
+        if (!existing) {
+            unique = true;
+        }
     }
-  
+
     account.id = generatedId;
-  });
+});
 
 const Transaction = sequelize.define('Transaction', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     amount: { type: DataTypes.FLOAT, allowNull: false },
     description: { type: DataTypes.STRING },
-    date: { type: DataTypes.DATE, allowNull: true},
+    date: { type: DataTypes.DATE, allowNull: true },
     status: {
         type: DataTypes.ENUM('Waiting', 'Approved', 'Rejected'),
         defaultValue: 'Waiting'
     },
     isFraud: { type: DataTypes.BOOLEAN, defaultValue: false },
-    motivation: { type: DataTypes.STRING, allowNull: true}
+    motivation: { type: DataTypes.STRING, allowNull: true }
 });
 
 User.hasOne(ClientProfile);
@@ -69,7 +69,7 @@ ClientProfile.belongsTo(User);
 User.hasOne(BankAccount);
 BankAccount.belongsTo(User);
 
-BankAccount.hasOne(Transaction);
+BankAccount.hasMany(Transaction);//modificat aici
 Transaction.belongsTo(BankAccount);
 
 User.hasMany(Transaction, { as: 'transactions' });

@@ -15,11 +15,12 @@ export default function HistoryAdmin() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Istoric</h1>
-      <p>Tranzacții considerate fraudă.</p>
+      <h1 className="text-2xl font-bold mb-4 text-center">Istoric</h1> { }
+      <p className="text-lg ml-8 mb-4">Tranzacții considerate fraudă.</p> { }
       <div className="p-6">
         <HistoryTable />
       </div>
     </div>
+
   );
 }

@@ -40,20 +40,22 @@ export default function TransactionsPage() {
             <Plus className="h-4 w-4" /> Adaugă tranzacție
           </button>
         </Link>}
-        {/* <Link to="/deposit/new">
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-            <Plus className="h-4 w-4" /> Alimentează cont
-          </button>
-        </Link> */}
       </div>
 
       <div className="bg-white shadow rounded-xl p-4">
         <h2 className="text-xl font-semibold mb-2">Toate tranzacțiile</h2>
-        <p className="text-sm text-gray-500 mb-4">Gestionează și vizualizează toate tranzacțiile tale</p>
-        {user && profile && <TransactionsTable userId={user.id} />}
-        {user && !profile && <div className='card p-5 text-red-500'>
-          <h3>Completează-ți profilul mai întâi!</h3>
-        </div>}
+        {profile && Object.keys(profile).length > 0 && (
+          <p className="text-sm text-gray-500 mb-4">Gestionează și vizualizează toate tranzacțiile tale</p>
+        )}
+
+        {user && profile && Object.keys(profile).length > 0 && <TransactionsTable userId={user.id} />}
+
+        {user && !profile && (
+          <div className='card p-5 text-red-500'>
+            <h3 className="text-lg font-bold">Pentru a putea efectua tranzacții, trebuie să îți completezi profilul. Te rugăm să adaugi informațiile necesare pentru a finaliza procesul de verificare KYC.</h3>
+          </div>
+        )}
+
       </div>
     </div>
   );

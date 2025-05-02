@@ -45,14 +45,15 @@ export default function TransactionsAdminTable() {
       <table className="min-w-full text-sm text-left text-gray-700">
         <thead className="bg-blue-100 text-gray-900">
           <tr>
-            <th className="px-4 py-3">ID</th>
             <th className="px-4 py-3">Titular</th>
+            <th className="px-4 py-3">Telefon</th>
             <th className="px-4 py-3">Sumă</th>
+            <th className="px-4 py-3">Monedă</th>
             <th className="px-4 py-3">Descriere</th>
             <th className="px-4 py-3">Data</th>
             <th className="px-4 py-3">Fraudă?</th>
             <th className="px-4 py-3">Motivație</th>
-            <th className="px-4 py-3 text-right">Acțiuni</th>
+            <th className="px-4 py-3">Acțiuni</th>
           </tr>
         </thead>
         <tbody>
@@ -67,29 +68,32 @@ export default function TransactionsAdminTable() {
           ) : (
             transactions.map((tx) => (
               <tr key={tx.id} className="border-t hover:bg-gray-50 transition">
-                <td className="px-4 py-2">{tx.id}</td>
                 <td className="px-4 py-2">{tx.User.ClientProfile.lastName + ' ' + tx.User.ClientProfile.firstName}</td>
-                <td className="px-4 py-2">{tx.amount.toFixed(2)} RON</td>
+                <td className="px-4 py-2">{tx.User.ClientProfile.phone}</td>
+                <td className="px-4 py-2">{tx.amount.toFixed(2)}</td>
+                <td className="px-4 py-2">{tx.BankAccount?.currency}</td>
                 <td className="px-4 py-2">{tx.description}</td>
                 <td className="px-4 py-2">{new Date(tx.date).toLocaleDateString('ro-RO') + ", " + new Date(tx.date).toLocaleTimeString('ro-RO')}</td>
                 <td className="px-4 py-2">
                   <span className="text-red-600 font-semibold">{tx.isFraud ? 'DA' : 'NU'}</span>
                 </td>
-                <td className="px-4 py-2 text-right space-x-2">
-                  <button
-                    onClick={() => handleUpdate(tx.id, 'Approved', false)}
-                    className="px-3 py-1 text-sm rounded bg-green-600 text-white hover:bg-green-700"
-                  >
-                    Aprobă
-                  </button>
-                  <button
-                    onClick={() => handleUpdate(tx.id, 'Rejected', true)}
-                    className="px-3 py-1 text-sm rounded bg-red-600 text-white hover:bg-red-700"
-                  >
-                    Respinge
-                  </button>
-                </td>
                 <td className="px-4 py-2">{tx.motivation}</td>
+                <td className="px-4 py-2 text-right">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleUpdate(tx.id, 'Approved', false)}
+                      className="px-3 py-1 text-sm rounded bg-green-600 text-white hover:bg-green-700"
+                    >
+                      Aprobă
+                    </button>
+                    <button
+                      onClick={() => handleUpdate(tx.id, 'Rejected', true)}
+                      className="px-3 py-1 text-sm rounded bg-red-600 text-white hover:bg-red-700"
+                    >
+                      Respinge
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))
           )}

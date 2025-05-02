@@ -1,12 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { User } = require('../models');
+const { User, ClientProfile } = require('../models');
 const { Op } = require('sequelize');
 
 // Standard CRUD routes for User
 router.route('/').get(async (req, res) => {
     try {
-        const query = {};
+        const query = {
+            include: [
+                {
+                    model: ClientProfile,
+                    attributes: ['firstName', 'lastName', 'address', 'phone']
+                }
+            ]
+        };
         const allowedFilters = Object.keys(User.rawAttributes);
         const filterKeys = Object.keys(req.query).filter(e => allowedFilters.includes(e));
         if (filterKeys.length > 0) {

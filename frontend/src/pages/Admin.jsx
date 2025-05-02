@@ -15,12 +15,14 @@ export default function Admin() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Panou Administrator</h1>
-      <p>Tranzacții în așteptare și gestiunea activității clienților.</p>
+      <h1 className="text-2xl font-bold mb-4 text-center">Panou Administrator</h1>
+      {/* <p className="text-lg ml-8 mb-4">Tranzacții în așteptare și gestiunea activității clienților.</p> */}
       <div className="p-6">
         <h1 className="text-2xl font-bold text-gray-200 mb-4">Tranzacții în așteptare</h1>
         <TransactionsAdminTable />
       </div>
     </div>
+
+   
   );
 }
