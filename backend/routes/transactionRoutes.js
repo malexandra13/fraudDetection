@@ -9,7 +9,7 @@ router.route('/').get(async (req, res) => {
             include: [
                 {
                     model: BankAccount,
-                attributes: ['currency'] 
+                    attributes: ['currency']
                 },
                 {
                     model: User,
@@ -88,10 +88,22 @@ router.route('/:id').put(async (req, res) => {
         });
         if (updated) {
             const updatedRecord = await Transaction.findByPk(req.params.id);
+
+            if (req.body.isFraud) {
+                const bankAccount = await BankAccount.findByPk(updatedRecord.BankAccountId);
+                if (bankAccount) {
+                    await BankAccount.update({balance: (bankAccount.balance + updatedRecord.amount)}, {
+                        where: { id: updatedRecord.BankAccountId }
+                    });
+                    
+                }
+            }
+
             const io = req.app.get('io');
             io.emit('transaction_update', { action: 'updated', transaction: updatedRecord });
             return res.json(updatedRecord);
         }
+
         return res.status(404).json({ error: 'Transaction not found.' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -115,38 +127,38 @@ router.route('/:id').delete(async (req, res) => {
 
 // GET /transactions/stats?userId=123 (opțional)
 router.route('/stats/general').get(async (req, res) => {
-  try {
-    const where = {};
-    if (req.query.userId) {
-      where.UserId = req.query.userId;
+    try {
+        const where = {};
+        if (req.query.userId) {
+            where.UserId = req.query.userId;
+        }
+
+        const total = await Transaction.count({ where });
+        const fraud = await Transaction.count({ where: { ...where, isFraud: true } });
+        const legit = total - fraud;
+
+        res.json({ total, fraud, legit });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    const total = await Transaction.count({ where });
-    const fraud = await Transaction.count({ where: { ...where, isFraud: true } });
-    const legit = total - fraud;
-
-    res.json({ total, fraud, legit });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 });
 
 // Pentru lista de clienți cu profil
-router.route('/stats/clients').get( async (req, res) => {
-  try {
-    const clients = await User.findAll({
-      where: { role: 'client' },
-      include: [{ model: ClientProfile }]
-    });
+router.route('/stats/clients').get(async (req, res) => {
+    try {
+        const clients = await User.findAll({
+            where: { role: 'client' },
+            include: [{ model: ClientProfile }]
+        });
 
-    res.json(clients.map(u => ({
-      id: u.id,
-      email: u.email,
-      fullName: `${u.ClientProfile?.firstName || ''} ${u.ClientProfile?.lastName || ''}`.trim()
-    })));
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+        res.json(clients.map(u => ({
+            id: u.id,
+            email: u.email,
+            fullName: `${u.ClientProfile?.firstName || ''} ${u.ClientProfile?.lastName || ''}`.trim()
+        })));
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 module.exports = router;
