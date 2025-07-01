@@ -8,6 +8,7 @@ import axios from '../common/axios';
 export default function TransactionsPage() {
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
+  const [hasAccounts, setHasAccounts] = useState(false);
   const [profile, setProfile] = useState({});
 
   useEffect(() => {
@@ -22,10 +23,12 @@ export default function TransactionsPage() {
     try {
       const res = await axios.get(`/clients?UserId=${user.id}`);
       setProfile(res.data);
-      console.log('ok', res.data)
-      if (user?.role == 'client') {
-        navigate("/transactions")
+
+      const accRes = await axios.get('accounts?UserId=' + user.id);
+      if (accRes.data && accRes.data.length > 0) {
+        setHasAccounts(true);
       }
+
     } catch (e) {
       console.error(e);
     }
@@ -35,11 +38,14 @@ export default function TransactionsPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-100">Tranzacții</h1>
-        {user && profile && <Link to="/transactions/new">
+        {user && profile && hasAccounts && <Link to="/transactions/new">
           <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
             <Plus className="h-4 w-4" /> Adaugă tranzacție
           </button>
         </Link>}
+        {!hasAccounts && user && profile && <div className="bg-white rounded-xl shadow p-4">
+           <p className="text-gray-500 text-center">Pentru a putea efectua tranzacții, trebuie să îți asociezi un cont bancar.</p>
+         </div>}
       </div>
 
       <div className="bg-white shadow rounded-xl p-4">
