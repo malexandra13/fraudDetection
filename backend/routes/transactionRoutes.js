@@ -112,4 +112,41 @@ router.route('/:id').delete(async (req, res) => {
     }
 });
 
+
+// GET /transactions/stats?userId=123 (opțional)
+router.route('/stats/general').get(async (req, res) => {
+  try {
+    const where = {};
+    if (req.query.userId) {
+      where.UserId = req.query.userId;
+    }
+
+    const total = await Transaction.count({ where });
+    const fraud = await Transaction.count({ where: { ...where, isFraud: true } });
+    const legit = total - fraud;
+
+    res.json({ total, fraud, legit });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Pentru lista de clienți cu profil
+router.route('/stats/clients').get( async (req, res) => {
+  try {
+    const clients = await User.findAll({
+      where: { role: 'client' },
+      include: [{ model: ClientProfile }]
+    });
+
+    res.json(clients.map(u => ({
+      id: u.id,
+      email: u.email,
+      fullName: `${u.ClientProfile?.firstName || ''} ${u.ClientProfile?.lastName || ''}`.trim()
+    })));
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

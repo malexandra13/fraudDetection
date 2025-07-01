@@ -50,6 +50,12 @@ export default function AppBar() {
                   >
                     Istoric
                   </button>
+                  <button
+                    onClick={() => handleNavigation('/admin/analysis')}
+                    className="hover:underline"
+                  >
+                    Analiză
+                  </button>
                 </>
               ) : (
                 <>

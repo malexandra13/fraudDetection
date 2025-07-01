@@ -14,6 +14,7 @@ import EditBankAccountPage from './pages/EditBankAccountPage';
 import './index.css';
 import DepositPage from './pages/DepositPage';
 import HistoryAdmin from './pages/HistoryAdmin';
+import AdminAnalysisPage from './pages/AdminAnalysisPage';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/bank-accounts" element={<BankAccountsPage />} />
           <Route path="/bank-accounts/new" element={<AddBankAccountPage />} /> 
           <Route path="/bank-accounts/edit/:id" element={<EditBankAccountPage />} /> 
+          <Route path="/admin/analysis" element={<AdminAnalysisPage />} />
         </Routes>
       </div>
     </Router>
