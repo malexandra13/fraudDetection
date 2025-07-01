@@ -8,8 +8,13 @@ export default function Signup() {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'client'
+    role: 'client',
+    firstName: '',
+    lastName: '',
+    address: '',
+    phone: ''
   });
+
   const [errors, setErrors] = useState({});
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(null);
@@ -21,6 +26,8 @@ export default function Signup() {
     if (values.password.length < 6) errs.password = 'Parola trebuie să aibă minim 6 caractere';
     if (values.password !== values.confirmPassword)
       errs.confirmPassword = 'Parolele nu se potrivesc';
+    if (!values.firstName) errs.firstName = 'Prenumele este obligatoriu';
+    if (!values.lastName) errs.lastName = 'Numele este obligatoriu';
     return errs;
   };
 
@@ -47,9 +54,12 @@ export default function Signup() {
         navigate('/login');
       }
     } catch (err) {
-      if (err.response.data.message.name == "SequelizeUniqueConstraintError") {
+      if (err.response?.data?.message?.name === "SequelizeUniqueConstraintError") {
         setError("Contul deja există!");
-      } else setError("Nu s-a putut crea contul.");
+      } else {
+        setError("Nu s-a putut crea contul.");
+        console.error(err);
+      }
     }
   };
 
@@ -70,6 +80,7 @@ export default function Signup() {
               value={values.email}
               onChange={handleChange}
               className="w-full border rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
@@ -82,6 +93,7 @@ export default function Signup() {
               value={values.password}
               onChange={handleChange}
               className="w-full border rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
             />
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
@@ -94,8 +106,57 @@ export default function Signup() {
               value={values.confirmPassword}
               onChange={handleChange}
               className="w-full border rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
             />
             {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Prenume</label>
+            <input
+              type="text"
+              name="firstName"
+              value={values.firstName}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Nume</label>
+            <input
+              type="text"
+              name="lastName"
+              value={values.lastName}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Adresă</label>
+            <input
+              type="text"
+              name="address"
+              value={values.address}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Telefon</label>
+            <input
+              type="text"
+              name="phone"
+              value={values.phone}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
           </div>
 
           <button

@@ -19,13 +19,13 @@ export default function ProfilePage() {
       navigate('/login');
     }
     user && fetchProfile();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, user]);
 
   const fetchProfile = async () => {
     try {
       const res = await axios.get('clients?UserId=' + user.id);
-      if (res.status === 200 && res.data.length > 0) {
-        setFormData(res.data[0])
+      if (res.status === 200 && res.data) {
+        setFormData(res.data)
       }
     } catch (err) {
       setMessage('A apărut o eroare la preluarea profilului.');
@@ -81,7 +81,7 @@ export default function ProfilePage() {
 
       <h3 className="text-xl font-medium text-gray-800 mb-4 text-center">Actualizare date</h3>
       {message && <p className="text-center text-sm text-blue-500 mb-4">{message}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4 text-gray-800">
+      {user != null && <form onSubmit={handleSubmit} className="space-y-4 text-gray-800">
         <div>
           <label className="block text-sm font-medium text-gray-700">Prenume</label>
           <input
@@ -134,7 +134,7 @@ export default function ProfilePage() {
         >
           Salvează profil
         </button>
-      </form>
+      </form>}
     </div>
   );
 }

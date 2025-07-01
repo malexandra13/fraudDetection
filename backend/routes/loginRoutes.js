@@ -38,17 +38,31 @@ router.post('/login', async (req, res) => {
 
 router.post("/signup", async (req, res) => {
   try {
-    const { password, email } = req.body;
+    const { password, email, role, firstName, lastName, address, phone } = req.body;
+
     const encrypted = await hashPassword(password);
+
     const newUser = await User.create({
-      role: req.body.role ? req.body.role : 'client',
-      password: encrypted, email
+      email,
+      password: encrypted,
+      role: role || 'client'
     });
-    const savedUser = await newUser.save();
-    return res.status(200).json(savedUser);
+
+    // Creează automat ClientProfile dacă rolul este 'client'
+    if ((role || 'client') === 'client') {
+      await ClientProfile.create({
+        firstName,
+        lastName,
+        address,
+        phone,
+        UserId: newUser.id
+      });
+    }
+
+    return res.status(200).json({ message: 'Utilizator creat cu succes!', user: newUser });
 
   } catch (err) {
-    console.error(err)
+    console.error(err);
     return res.status(500).json({ message: err });
   }
 });

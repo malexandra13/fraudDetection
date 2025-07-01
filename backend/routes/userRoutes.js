@@ -40,12 +40,25 @@ router.route('/:id').get(async (req, res) => {
 });
 
 router.route('/').post(async (req, res) => {
-    try {
-        const newRecord = await User.create(req.body);
-        res.status(201).json(newRecord);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  const { firstName, lastName, address, phone, ...userData } = req.body;
+
+  try {
+    const user = await User.create(userData);
+
+    if (user.role === 'client') {
+      await ClientProfile.create({
+        firstName,
+        lastName,
+        address,
+        phone,
+        UserId: user.id
+      });
     }
+
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 router.route('/:id').put(async (req, res) => {
