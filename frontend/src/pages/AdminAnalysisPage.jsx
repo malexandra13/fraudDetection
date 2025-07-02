@@ -10,26 +10,39 @@ export default function AdminAnalysisPage() {
   const [stats, setStats] = useState({ fraud: 0, legit: 0 });
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState('');
+  const [hasTransactions, setHasTransactions] = useState(true); // nou
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user == null || user.role != 'admin') {
+    if (user == null || user.role !== 'admin') {
       navigate("/");
     }
   }, [isLoggedIn]);
 
   const fetchStats = async (userId = '') => {
-    const res = await axios.get('transactions/stats/general', {
-      params: userId ? { userId } : {}
-    });
-    console.log(res)
-    setStats({ fraud: res.data.fraud, legit: res.data.legit });
+    try {
+      const res = await axios.get('transactions/stats/general', {
+        params: userId ? { userId } : {}
+      });
+
+      const { fraud, legit } = res.data;
+      setStats({ fraud, legit });
+      setHasTransactions(fraud + legit > 0); // actualizare flag
+    } catch (error) {
+      console.error("Eroare la preluarea statisticilor:", error);
+      setStats({ fraud: 0, legit: 0 });
+      setHasTransactions(false);
+    }
   };
 
   const fetchClients = async () => {
-    const res = await axios.get('transactions/stats/clients');
-    setClients(res.data);
+    try {
+      const res = await axios.get('transactions/stats/clients');
+      setClients(res.data);
+    } catch (error) {
+      console.error("Eroare la preluarea clienților:", error);
+    }
   };
 
   useEffect(() => {
@@ -54,27 +67,31 @@ export default function AdminAnalysisPage() {
 
       <div className="flex flex-col md:flex-row gap-8">
         {/* Grafic */}
-        <div className="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
-          <PieChart width={400} height={300}>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              dataKey="value"
-              label
-            >
-              {chartData.map((entry, index) => (
-                <Cell key={index} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
+        <div className="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3 flex items-center justify-center min-h-[300px]">
+          {hasTransactions ? (
+            <PieChart width={400} height={300}>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                dataKey="value"
+                label
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          ) : (
+            <p className="text-gray-600 text-lg text-center">Acest client nu are tranzacții disponibile.</p>
+          )}
         </div>
 
         <div className="w-full md:w-1/3">
-          <label className="block mb-2 text-white-700 font-medium">Selectează client</label>
+          <label className="block mb-2 text-white font-medium">Selectează client</label>
           <select
             onChange={handleClientChange}
             value={selectedClient}
